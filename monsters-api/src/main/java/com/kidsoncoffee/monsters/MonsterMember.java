@@ -18,14 +18,6 @@ public @interface MonsterMember {
     String getName();
 
     List<String> getParameters();
-
-    boolean isMethod();
-
-    boolean isField();
-
-    boolean isPublic();
-
-    boolean isPackagePrivate();
   }
 
   @FunctionalInterface
@@ -33,7 +25,7 @@ public @interface MonsterMember {
     T generate();
   }
 
-  //TODO fchovich MAKE THIS AN INTERFACE
+  // TODO fchovich MAKE THIS AN INTERFACE
   class ValueBinder {
 
     private final Map<Schema, ValueGenerator> generatorsByMethod = new HashMap<>();

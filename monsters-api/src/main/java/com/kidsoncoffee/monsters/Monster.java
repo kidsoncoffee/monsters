@@ -24,5 +24,5 @@ public @interface Monster {
 
   interface DefaultGenerator {}
 
-  Class<? extends DefaultGenerator>[] defaultGenerator();
+  Class<? extends DefaultGenerator>[] defaultGenerators() default {};
 }
