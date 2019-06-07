@@ -71,7 +71,7 @@ public class MonsterBuilderGenerator {
                       .addModifiers(Modifier.PUBLIC)
                       .addParameter(parameter)
                       .addStatement(
-                          "this.setValue($T.$N.getMember(), $N)",
+                          "this.setValue($T.$N, $N)",
                           schemaClassName,
                           createEnumConstantName(e),
                           parameter)

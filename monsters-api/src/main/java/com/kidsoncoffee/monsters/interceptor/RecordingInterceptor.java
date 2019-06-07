@@ -6,7 +6,7 @@ import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 
-import static com.kidsoncoffee.monsters.MonsterMemberSchemaParse.parse;
+import static com.kidsoncoffee.monsters.MonsterMemberSchemaParser.parse;
 
 /**
  * @author fernando.chovich

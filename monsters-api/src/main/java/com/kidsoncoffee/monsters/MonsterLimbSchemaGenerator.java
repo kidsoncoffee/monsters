@@ -1,12 +1,17 @@
 package com.kidsoncoffee.monsters;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.*;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -75,6 +80,20 @@ public class MonsterLimbSchemaGenerator {
         ParameterSpec.builder(parametersType, "parameters", Modifier.FINAL).build();
 
     schemaEnumBuilder.addMethod(
+        MethodSpec.methodBuilder("getName")
+            .addModifiers(Modifier.PUBLIC)
+            .returns(String.class)
+            .addStatement("return this.$N", nameField)
+            .build());
+
+    schemaEnumBuilder.addMethod(
+        MethodSpec.methodBuilder("getParameters")
+            .addModifiers(Modifier.PUBLIC)
+            .returns(parametersType)
+            .addStatement("return this.$N", parametersField)
+            .build());
+
+    schemaEnumBuilder.addMethod(
         MethodSpec.constructorBuilder()
             .addParameter(nameParameter)
             .addParameter(parametersParameter)
@@ -95,15 +114,9 @@ public class MonsterLimbSchemaGenerator {
                 Pair.of(
                     createEnumConstantName(e),
                     TypeSpec.anonymousClassBuilder(
-                            "$S, asList($L), $L, $L, $L, $L",
+                            "$S, asList($L)",
                             e.getSimpleName().toString(),
-                            Stream.empty().map(String.class::cast).collect(joining(", ")),
-                            e.getKind().equals(ElementKind.FIELD),
-                            e.getKind().equals(ElementKind.METHOD),
-                            e.getModifiers().contains(Modifier.PUBLIC),
-                            !e.getModifiers().contains(Modifier.PUBLIC)
-                                && !e.getModifiers().contains(Modifier.PRIVATE)
-                                && !e.getModifiers().contains(Modifier.PROTECTED))
+                            Stream.empty().map(String.class::cast).collect(joining(", ")))
                         .build()))
         .forEach(c -> schemaEnumBuilder.addEnumConstant(c.getLeft(), c.getRight()));
 

@@ -36,7 +36,7 @@
                     <target>${java.target}</target>
                 </configuration>
                 <executions>
-                    <execution>
+                    <!--execution>
                         <id>default-compile</id>
                         <configuration>
                             <compilerArgument>-proc:none</compilerArgument>
@@ -44,7 +44,7 @@
                                 <include>com/kidsoncoffee/monsters/MonsterProcessor.java</include>
                             </includes>
                         </configuration>
-                    </execution>
+                    </execution-->
                     <execution>
                         <id>compile-project</id>
                         <phase>compile</phase>

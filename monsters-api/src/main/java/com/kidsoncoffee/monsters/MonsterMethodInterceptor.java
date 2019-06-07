@@ -87,8 +87,8 @@ public class MonsterMethodInterceptor implements MethodInterceptor {
         !Modifier.isPrivate(method.getModifiers())
             && !Modifier.isPublic(method.getModifiers())
             && !Modifier.isProtected(method.getModifiers());
-    return new ImmutableMonsterMemberSchema(
-        memberName, memberParameters(method), true, false, publicAccess, packagePrivateAccess);
+    return null;//new ImmutableMonsterMemberSchema(
+        //memberName, memberParameters(method), true, false, publicAccess, packagePrivateAccess);
   }
 
   private static List<String> memberParameters(final Method method) {

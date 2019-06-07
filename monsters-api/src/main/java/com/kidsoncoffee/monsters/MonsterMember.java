@@ -1,6 +1,7 @@
 package com.kidsoncoffee.monsters;
 
 import com.kidsoncoffee.monsters.interceptor.CallHistory;
+import org.immutables.value.Value;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ public @interface MonsterMember {
 
   // MOVE THIS AND RENAME TO MEMBER
   // THIS IS NOT PUBLIC API
+  @Value.Immutable
   interface Schema {
     String getName();
 
