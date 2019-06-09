@@ -5,7 +5,6 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
-import java.util.Map;
 
 import static com.kidsoncoffee.monsters.MonsterMemberSchemaParser.parse;
 
@@ -15,10 +14,10 @@ import static com.kidsoncoffee.monsters.MonsterMemberSchemaParser.parse;
  */
 public class PlayingInterceptor implements MethodInterceptor {
 
-  private final Map<MonsterMember.Schema, Object> values;
+  private final ValueStore valueStore;
 
-  public PlayingInterceptor(final Map<MonsterMember.Schema, Object> values) {
-    this.values = values;
+  public PlayingInterceptor(ValueStore valueStore) {
+    this.valueStore = valueStore;
   }
 
   @Override
@@ -26,6 +25,8 @@ public class PlayingInterceptor implements MethodInterceptor {
       throws Throwable {
     final MonsterMember.Schema member = parse(method);
 
-    return values.getOrDefault(member, null);
+    return this.valueStore
+        .get(member)
+        .orElseThrow(() -> new MonsterLimbValueNotFoundException(member));
   }
 }

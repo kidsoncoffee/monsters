@@ -1,13 +1,7 @@
 package com.kidsoncoffee.monsters;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.processing.Filer;
@@ -23,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.google.auto.common.MoreElements.asExecutable;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
@@ -58,7 +53,7 @@ public class MonsterLimbSchemaGenerator {
 
     final ClassName schemaClassName =
         ClassName.get(
-            this.elementUtils.getPackageOf(monsterElement).getSimpleName().toString(),
+            this.elementUtils.getPackageOf(monsterElement).toString(),
             format("%sMonsterSchema", monsterTargetElement.getSimpleName()));
 
     final TypeSpec.Builder schemaEnumBuilder =
@@ -70,14 +65,18 @@ public class MonsterLimbSchemaGenerator {
     final FieldSpec nameField = FieldSpec.builder(String.class, "name", Modifier.FINAL).build();
     final FieldSpec parametersField =
         FieldSpec.builder(parametersType, "parameters", Modifier.FINAL).build();
+    final FieldSpec typeField = FieldSpec.builder(Class.class, "type", Modifier.FINAL).build();
 
     schemaEnumBuilder.addField(nameField);
     schemaEnumBuilder.addField(parametersField);
+    schemaEnumBuilder.addField(typeField);
 
     final ParameterSpec nameParameter =
         ParameterSpec.builder(String.class, "name", Modifier.FINAL).build();
     final ParameterSpec parametersParameter =
         ParameterSpec.builder(parametersType, "parameters", Modifier.FINAL).build();
+    final ParameterSpec typeParameter =
+        ParameterSpec.builder(Class.class, "type", Modifier.FINAL).build();
 
     schemaEnumBuilder.addMethod(
         MethodSpec.methodBuilder("getName")
@@ -94,11 +93,20 @@ public class MonsterLimbSchemaGenerator {
             .build());
 
     schemaEnumBuilder.addMethod(
+        MethodSpec.methodBuilder("getType")
+            .addModifiers(Modifier.PUBLIC)
+            .returns(Class.class)
+            .addStatement("return this.$N", typeField)
+            .build());
+
+    schemaEnumBuilder.addMethod(
         MethodSpec.constructorBuilder()
             .addParameter(nameParameter)
             .addParameter(parametersParameter)
+            .addParameter(typeParameter)
             .addStatement("this.$N = $N", nameField, nameParameter)
             .addStatement("this.$N = $N", parametersField, parametersParameter)
+            .addStatement("this.$N = $N", typeField, typeParameter)
             .build());
 
     final List<? extends Element> monsterAccessibles =
@@ -107,23 +115,22 @@ public class MonsterLimbSchemaGenerator {
     if (monsterAccessibles.isEmpty()) {
       return Optional.empty();
     }
-
     monsterAccessibles.stream()
         .map(
             e ->
                 Pair.of(
                     createEnumConstantName(e),
                     TypeSpec.anonymousClassBuilder(
-                            "$S, asList($L)",
+                            "$S, asList($L), $T.class",
                             e.getSimpleName().toString(),
-                            Stream.empty().map(String.class::cast).collect(joining(", ")))
+                            Stream.empty().map(String.class::cast).collect(joining(", ")),
+                            asExecutable(e).getReturnType())
                         .build()))
         .forEach(c -> schemaEnumBuilder.addEnumConstant(c.getLeft(), c.getRight()));
 
     try {
       final TypeSpec schemaEnum = schemaEnumBuilder.build();
-      JavaFile.builder(
-              this.elementUtils.getPackageOf(monsterElement).getSimpleName().toString(), schemaEnum)
+      JavaFile.builder(this.elementUtils.getPackageOf(monsterElement).toString(), schemaEnum)
           .addStaticImport(Arrays.class, "asList")
           .build()
           .writeTo(this.filer);

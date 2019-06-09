@@ -1,22 +1,21 @@
 package com.kidsoncoffee.monsters;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.squareup.javapoet.*;
 
 import javax.annotation.processing.Filer;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
+import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 
 public class MonsterBuilderGenerator {
 
@@ -52,7 +51,7 @@ public class MonsterBuilderGenerator {
 
     final ClassName monsterClassName =
         ClassName.get(
-            this.elementUtils.getPackageOf(monsterElement).getSimpleName().toString(),
+            this.elementUtils.getPackageOf(monsterElement).toString(),
             format("%sMonsterBuilder", monsterTargetElement.getSimpleName()));
 
     final List<MethodSpec> methods =
@@ -81,6 +80,109 @@ public class MonsterBuilderGenerator {
             .map(MethodSpec.Builder::build)
             .collect(Collectors.toList());
 
+    final AnnotationValueVisitor<Object, Object> annotationValueVisitor =
+        new AnnotationValueVisitor<Object, Object>() {
+          @Override
+          public Object visit(AnnotationValue av, Object o) {
+            return null;
+          }
+
+          @Override
+          public Object visit(AnnotationValue av) {
+            return null;
+          }
+
+          @Override
+          public Object visitBoolean(boolean b, Object o) {
+            return null;
+          }
+
+          @Override
+          public Object visitByte(byte b, Object o) {
+            return null;
+          }
+
+          @Override
+          public Object visitChar(char c, Object o) {
+            return null;
+          }
+
+          @Override
+          public Object visitDouble(double d, Object o) {
+            return null;
+          }
+
+          @Override
+          public Object visitFloat(float f, Object o) {
+            return null;
+          }
+
+          @Override
+          public Object visitInt(int i, Object o) {
+            return null;
+          }
+
+          @Override
+          public Object visitLong(long i, Object o) {
+            return null;
+          }
+
+          @Override
+          public Object visitShort(short s, Object o) {
+            return null;
+          }
+
+          @Override
+          public Object visitString(String s, Object o) {
+            return null;
+          }
+
+          @Override
+          public Object visitType(TypeMirror t, Object o) {
+            return null;
+          }
+
+          @Override
+          public Object visitEnumConstant(VariableElement c, Object o) {
+            return null;
+          }
+
+          @Override
+          public Object visitAnnotation(AnnotationMirror a, Object o) {
+            return null;
+          }
+
+          @Override
+          public Object visitArray(List<? extends AnnotationValue> vals, Object o) {
+            return vals.stream()
+                .map(e -> ((AnnotationValue) e).getValue())
+                .collect(Collectors.toList());
+          }
+
+          @Override
+          public Object visitUnknown(AnnotationValue av, Object o) {
+            return null;
+          }
+        };
+    final TypeMirror monsterType =
+        this.elementUtils.getTypeElement(Monster.class.getCanonicalName()).asType();
+    final List<Object> defaultGenerators =
+        monsterElement.getAnnotationMirrors().stream()
+            .filter(e -> this.typeUtils.isSameType(monsterType, e.getAnnotationType()))
+            .flatMap(e -> e.getElementValues().entrySet().stream())
+            .filter(e -> e.getKey().getSimpleName().toString().equals("defaultGenerators"))
+            .map(Map.Entry::getValue)
+            .map(e -> e.accept(annotationValueVisitor, null))
+            .map(List.class::cast)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
+    final String constructorExpression =
+        String.format(
+            "super($T.class, asList($T.values()), asList(%s))",
+            defaultGenerators.stream().map(d -> "$T.class").collect(Collectors.joining(", ")));
+    final List<List> constructorParameters =
+        ImmutableList.of(asList(monsterElement, schemaClassName), defaultGenerators);
+
     final TypeSpec typeSpec =
         TypeSpec.classBuilder(monsterClassName)
             .superclass(
@@ -91,7 +193,9 @@ public class MonsterBuilderGenerator {
             .addMethod(
                 MethodSpec.constructorBuilder()
                     .addModifiers(Modifier.PRIVATE)
-                    .addStatement("super($T.class)", monsterElement)
+                    .addStatement(
+                        constructorExpression,
+                        constructorParameters.stream().flatMap(Collection::stream).toArray())
                     .build())
             .addMethod(
                 MethodSpec.methodBuilder(monsterTargetElement.getSimpleName().toString())
@@ -102,8 +206,8 @@ public class MonsterBuilderGenerator {
             .addMethods(methods)
             .build();
     try {
-      JavaFile.builder(
-              this.elementUtils.getPackageOf(monsterElement).getSimpleName().toString(), typeSpec)
+      JavaFile.builder(this.elementUtils.getPackageOf(monsterElement).toString(), typeSpec)
+          .addStaticImport(Arrays.class, "asList")
           .build()
           .writeTo(this.filer);
     } catch (IOException e) {

@@ -6,6 +6,7 @@ import org.immutables.value.Value;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author fernando.chovich
@@ -18,6 +19,8 @@ public @interface MonsterMember {
   @Value.Immutable
   interface Schema {
     String getName();
+
+    Class getType();
 
     List<String> getParameters();
   }
@@ -42,8 +45,9 @@ public @interface MonsterMember {
       return this.generatorsByMethod.containsKey(member.getName());
     }
 
-    public MonsterMember.ValueGenerator getValue(final Schema member) {
-      return this.generatorsByMethod.get(member);
+    // TODO fchovich RESTRICT VISIBILITY
+    public Optional<ValueGenerator> getValue(final Schema member) {
+      return Optional.ofNullable(this.generatorsByMethod.get(member));
     }
 
     public final <X> void generate(

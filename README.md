@@ -73,13 +73,13 @@ The easiest and quickest of having a *data object* with values is by using type 
 
 Following this strategy, the framework will generate random data according to the return type of a given method in your *data object*.
 
-In our example, set the class `TypeGenerator` as the default generator parameter `defaultGenerator` in the `MonsterSetup` class:
+In our example, set `TypeBasedGenerator.class` on the parameter `defaultGenerators` in the `MonsterSetup` class:
 
 ### Custom data generation
 
 Usually type based data generation is not enough. A couple of reasons are:
 
-* The `TypeGenerator` covers only native *Java* types (The framework is able to resolve another data objects recursively though)
+* The `TypeBasedGenerator` covers only native *Java* types (The framework is able to resolve another data objects recursively though)
 * Random data inferred by type is void of meaning
 
 That second one is a huge deal and you can change generation behavior very easily.
@@ -92,3 +92,8 @@ The `setup` method of the `MonsterSetup` provides a `GeneratorBinder` and an ins
 ## Deep dive
 ## Download
 ## Related
+
+TODO
+* Exception and strict parameter when limb does not have value to generate
+* Default implementations of the java faker
+* Implement the rest of the primitive types
