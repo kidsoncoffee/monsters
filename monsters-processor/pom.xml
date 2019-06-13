@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>monsters-examples</artifactId>
+    <artifactId>monsters-processor</artifactId>
 
     <parent>
         <artifactId>monsters-root</artifactId>
@@ -14,22 +14,23 @@
     <dependencies>
         <!-- PROJECT -->
         <dependency>
+            <groupId>com.kidsoncoffee.monsters</groupId>
+            <artifactId>monsters-api</artifactId>
+        </dependency>
+        <dependency>
+            <!-- MAKE THIS RUNTIME DEP -->
             <groupId>com.github.kidsoncoffee</groupId>
-            <artifactId>monsters-all</artifactId>
+            <artifactId>monsters-impl</artifactId>
         </dependency>
 
         <!-- 3rd PARTY -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
+            <groupId>com.squareup</groupId>
+            <artifactId>javapoet</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>3.12.2</version>
-            <scope>test</scope>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
         </dependency>
     </dependencies>
 </project>

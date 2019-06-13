@@ -49,7 +49,7 @@
 * Generates data objects with preset random values
 * Generates data objects following certain archetypes or profiles
 * Provides builders to override random values.
-* Easy to setup, maintain, call and extend
+* Easy to limbSetup, maintain, call and extend
 
 ## Quickstart
 
@@ -61,9 +61,9 @@ First of all import the dependency into your project.
 
 ### Setup a *Monster* for your class
 
-After having the dependency declared, you start by writing a setup class for the *data object* class.
+After having the dependency declared, you start by writing a limbSetup class for the *data object* class.
 
-This class which we call the *Monster setup*, will centralize every behavior related to generating data to that *data object*.
+This class which we call the *Monster limbSetup*, will centralize every behavior related to generating data to that *data object*.
 
 So for example if you want to generate data for a *data object* named `MyDataObject`, you have to create a class which extends from `MonsterSetup<MyDataObject>` and is annotated with `@Monster`.
 
@@ -84,7 +84,7 @@ Usually type based data generation is not enough. A couple of reasons are:
 
 That second one is a huge deal and you can change generation behavior very easily.
 
-The `setup` method of the `MonsterSetup` provides a `GeneratorBinder` and an instance of the *data object*. Using them both you can:
+The `limbSetup` method of the `MonsterSetup` provides a `GeneratorBinder` and an instance of the *data object*. Using them both you can:
 
 * Bind a generator that implements the very specific behavior you want
 * Set a value stub to be returned every time

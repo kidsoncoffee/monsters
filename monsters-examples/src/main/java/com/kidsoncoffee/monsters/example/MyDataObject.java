@@ -8,4 +8,8 @@ public class MyDataObject {
   public int getNumber() {
     return 0;
   }
+
+  public String getProfession() {
+    return "DEVELOPER";
+  }
 }
