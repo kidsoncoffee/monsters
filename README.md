@@ -41,8 +41,8 @@ THIS IS A WORK IN PROGRESS
 <p align="center">
   <a href="#key-features">Key features</a> •
   <a href="#motivation">Motivation</a> •
+  <a href="#use-cases">Use cases</a> •
   <a href="#quickstart">Quickstart</a> •
-  <a href="#deep-dive">Deep dive</a> •
   <a href="#download">Download</a> •
   <a href="#related">Related</a>
 </p>
@@ -281,7 +281,6 @@ MyDataObjectMonster.myDataObject().build(MyDataObjectMonsterLimbSetup.CHILD);
 // profession: one of the three professions
 ```
 
-## Deep dive
 ## Download
 ## Related
 
