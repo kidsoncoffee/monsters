@@ -244,16 +244,21 @@ MyDataObjectMonster.myDataObject().build();
 // name: a random UUID
 // number: 42
 // profession: one of the three professions
+```
 
+```java
 // The parent archetype
 MyDataObjectMonster.myDataObject().build(MyDataObjectMonsterLimbSetup.PARENT); 
 
 // name: Mr. Parent
 // number: 666
 // profession: one of the three professions
+```
 
+```java
 // The child archetype
 MyDataObjectMonster.myDataObject().build(MyDataObjectMonsterLimbSetup.CHILD); 
+
 // name: Kiddo
 // number: 666
 // profession: one of the three professions
