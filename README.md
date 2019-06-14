@@ -40,6 +40,7 @@ THIS IS A WORK IN PROGRESS
 
 <p align="center">
   <a href="#key-features">Key features</a> •
+  <a href="#motivation">Motivation</a> •
   <a href="#quickstart">Quickstart</a> •
   <a href="#deep-dive">Deep dive</a> •
   <a href="#download">Download</a> •
@@ -52,6 +53,22 @@ THIS IS A WORK IN PROGRESS
 * Generates data objects following certain archetypes or profiles
 * Provides builders to override random values.
 * Easy to limbSetup, maintain, call and extend
+
+## Motivation
+
+The framework is based on the following premises:
+
+1. Tests are usually inputed with data objects.
+1. Data objects are not mocked (you only mock dependency behavior).
+1. On a test, what is expressed is exactly the necessary to make said test relevant in contrast to other tests.
+1. If your data object expresses precisely the values the test needs, it is irrelevant what are the rest of the properties.
+1. Then if a property is irrelevant for the test, it can be swaped by any other value without failing the test, and that's where *random data generation* comes into play.
+
+## Use cases
+
+1. You may use it as an audit tool for tests: assuming that a property is irrelevant the test shouldn't fail if the value is different at each test run.
+1. You may want to create easy to use and reuse test data objects to simulate and create tests quicker
+1. You may need to generate a large number of objects but you still need a variation of data and even something more close to real production data.
 
 ## Quickstart
 
