@@ -141,9 +141,9 @@ public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject>
   @Override
   public void setup(final MonsterLimb.Binding binding, final MyDataObject monster) {
 -
-+    generation.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
-+    generation.on(monster.getNumber()).fix(42);
-+    generation.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
++    binding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
++    binding.on(monster.getNumber()).fix(42);
++    binding.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
   }
 
   @Override
