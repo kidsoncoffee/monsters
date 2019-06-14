@@ -1,3 +1,5 @@
+THIS IS A WORK IN PROGRESS
+
 <h1 align="center">
   <br>
   <img src="images/monsters_logo.png" alt="Monsters" width="400">
@@ -59,35 +61,108 @@ Let's go through a quick example of how **Monsters** can be used in your project
 
 First of all import the dependency into your project.
 
-### Setup a *Monster* for your class
+#### Maven
 
-After having the dependency declared, you start by writing a limbSetup class for the *data object* class.
+```diff
+<dependencies>
 
-This class which we call the *Monster limbSetup*, will centralize every behavior related to generating data to that *data object*.
++  <dependency>
++    <groupId>com.github.kidsoncoffee</groupId>
++    <artifactId>monsters</artifactId>
++    <version>...</version>
++    <scope>test</scope>
++  </dependency>
 
-So for example if you want to generate data for a *data object* named `MyDataObject`, you have to create a class which extends from `MonsterSetup<MyDataObject>` and is annotated with `@Monster`.
+</dependencies>
+```
 
-### Type based data generation
+#### Gradle
 
-The easiest and quickest of having a *data object* with values is by using type based data generation.
+```diff
+dependencies {
 
-Following this strategy, the framework will generate random data according to the return type of a given method in your *data object*.
++  testImplementation 'com.github.kidsoncoffee:monsters:...'
 
-In our example, set `TypeBasedGenerator.class` on the parameter `defaultGenerators` in the `MonsterSetup` class:
+}
+```
 
-### Custom data generation
+### Keywords
 
-Usually type based data generation is not enough. A couple of reasons are:
+* **Monster:** We will call a *Monster* a *data object* configured to return pre-configured values from its *Limbs*.
+* **Limb:** *Limbs* are methods (usually getters) that returns a pre-configured value.
+* **Archetype:** An *Archetype* determines a kind of *Monster* and it's behavior. This is where the *Object Mother pattern* comes into play.
 
-* The `TypeBasedGenerator` covers only native *Java* types (The framework is able to resolve another data objects recursively though)
-* Random data inferred by type is void of meaning
+### Random data generation
 
-That second one is a huge deal and you can change generation behavior very easily.
+In this example we will setup a *Monster* for the following data object.
 
-The `limbSetup` method of the `MonsterSetup` provides a `GeneratorBinder` and an instance of the *data object*. Using them both you can:
+```java
+public class MyDataObject {
+  public String getName() {
+    return "DATA OBJECT NAME";
+  }
 
-* Bind a generator that implements the very specific behavior you want
-* Set a value stub to be returned every time
+  public int getNumber() {
+    return 0;
+  }
+
+  public String getProfession() {
+    return "DEVELOPER";
+  }
+}
+```
+
+The first step is creating a class which will centralize all information regarding that *Monster*. For the simplicity of this example, the class only needs to implement `Monster.Setup`.
+
+```java
+public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject> {
+
+  @Override
+  public void setup(final MonsterLimb.Binding binding, final MyDataObject monster) {
+
+  }
+
+  @Override
+  public void setup(final MonsterArchetype.Binding<MyDataObject> binding) {
+
+  }
+}
+```
+
+The `Monster.Setup` is a composite interface of `MonsterLimb.Setup` and `MonsterArchetype.Setup`. You may only use one of both, or even none, but let's just keep the methods's body empty for now.
+
+#### Set up *Limbs's* value generation
+
+The easiest way to set up data generation for a *Limb* is by using the `MonsterLimb.Setup` `setup` method.
+
+```diff
+public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject> {
+
+  @Override
+  public void setup(final MonsterLimb.Binding binding, final MyDataObject monster) {
+-
++    generation.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
++    generation.on(monster.getNumber()).fix(42);
++    generation.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
+  }
+
+  @Override
+  public void setup(final MonsterArchetype.Binding<MyDataObject> binding) {
+
+  }
+}
+```
+
+The example above shows all the possible set ups for generating data:
+* Supplying data following a specific logic
+* Fixing a value to be returned
+* Picking up a random value from a list of options
+
+A very important concept here is that the *Monster* will never return a null value unless explicitly configured. Saying that, if there is a *Limb* in the *Monster* without any generation binding, an exception will be thrown when called.
+
+#### Set up *Monster* default generator
+
+### Object Mother pattern
 
 ## Deep dive
 ## Download
