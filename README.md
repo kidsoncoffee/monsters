@@ -8,7 +8,7 @@ THIS IS A WORK IN PROGRESS
   <br>
 </h1>
 
-<h4 align="center">When Object Mother meets random data generation.</h4>
+<h4 align="center">When Object Mother meets random data binding.</h4>
 
 <p align="center">
   <a href="https://oss.sonatype.org/#nexus-search;quick~kidsoncoffee">

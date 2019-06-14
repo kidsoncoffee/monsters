@@ -20,27 +20,13 @@ public interface MonsterLimb {
 
   @FunctionalInterface
   interface Setup<T> {
-    void setup(final MonsterLimb.Generation generation, final T monster);
+    void setup(final Binding binding, final T monster);
   }
 
-  @FunctionalInterface
-  interface ValueGenerator<T> {
-    T generate();
-  }
-
-  interface ValueGenerationSetup<T> {
-    void generate(final ValueGenerator<T> generator);
-
-    void fix(final T value);
-
-    void pickFrom(final List<T> choices);
-  }
-
-  // TODO does this need to be here?
-  class Generation {
+  class Binding {
     private ValueGenerationSetup setup;
 
-    public Generation(final ValueGenerationSetup setup) {
+    public Binding(final ValueGenerationSetup setup) {
       this.setup = setup;
     }
 
@@ -48,4 +34,19 @@ public interface MonsterLimb {
       return this.setup;
     }
   }
+
+  @FunctionalInterface
+  interface ValueGenerator<T> {
+    T generate();
+
+  }
+  interface ValueGenerationSetup<T> {
+
+    void generate(final ValueGenerator<T> generator);
+
+    void fix(final T value);
+    void pickFrom(final List<T> choices);
+
+  }
+  // TODO does this need to be here?
 }

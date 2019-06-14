@@ -24,7 +24,7 @@ public interface MonsterArchetype {
 
   @FunctionalInterface
   interface Setup<T> {
-    void setup(final Binding<T> archetype);
+    void setup(final Binding<T> binding);
   }
 
   interface Binding<T> {

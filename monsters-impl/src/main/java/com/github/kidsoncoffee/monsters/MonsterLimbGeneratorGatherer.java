@@ -28,14 +28,14 @@ public class MonsterLimbGeneratorGatherer {
       final List<MonsterLimb.Schema> limbs,
       final T monster) {
     final DefaultGenerationSetup generationSetup = new DefaultGenerationSetup(this.callHistory);
-    final MonsterLimb.Generation generation = new MonsterLimb.Generation(generationSetup);
+    final MonsterLimb.Binding binding = new MonsterLimb.Binding(generationSetup);
 
     if (!archetypesSetupStore.get(archetype).isPresent()) {
       return Collections.emptyMap();
     }
 
     final MonsterLimb.Setup<T> setup = archetypesSetupStore.get(archetype).get();
-    setup.setup(generation, monster);
+    setup.setup(binding, monster);
 
     final Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> generators = new HashMap<>();
     for (final MonsterLimb.Schema limb : limbs) {

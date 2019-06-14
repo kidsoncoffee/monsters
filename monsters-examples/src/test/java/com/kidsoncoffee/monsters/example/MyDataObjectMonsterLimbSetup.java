@@ -25,9 +25,9 @@ public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject>
       ImmutableMonsterArchetypeSchema.builder().description("The other").build();
 
   @Override
-  public void setup(final MonsterLimb.Generation generation, final MyDataObject monster) {
-    generation.on(monster.getProfession()).pickFrom(DEFAULT_PROFESSIONS);
-    generation.on(monster.getNumber()).fix(42);
+  public void setup(final MonsterLimb.Binding binding, final MyDataObject monster) {
+    binding.on(monster.getProfession()).pickFrom(DEFAULT_PROFESSIONS);
+    binding.on(monster.getNumber()).fix(42);
   }
 
   @Override
@@ -35,8 +35,8 @@ public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject>
     archetype
         .when(RETAIL_JEDI)
         .setup(
-            (generation, monster) -> {
-              generation.on(monster.getProfession()).fix(RETAIL_JEDI_PROFESSION);
+            (binding, monster) -> {
+              binding.on(monster.getProfession()).fix(RETAIL_JEDI_PROFESSION);
             });
   }
 }
