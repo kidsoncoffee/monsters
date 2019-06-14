@@ -40,8 +40,7 @@ public class MonsterBuilder<T> {
     try {
       return monsterSetup.newInstance();
     } catch (InstantiationException | IllegalAccessException e) {
-      // TODO fchovich CREATE MESSAGE
-      throw new MonsterException();
+      throw new IllegalStateException(String.format("Unable to instantiate '%s'.", monsterSetup));
     }
   }
 
@@ -49,15 +48,19 @@ public class MonsterBuilder<T> {
     this.values.put(method, value);
   }
 
-  public T build(final Monster.Archetype archetype) {
-    return new Spawner<T>().spawn(this, Optional.of(archetype));
+  public T build(final MonsterArchetype.Schema archetype) {
+    return new Spawner<T>().spawn(this, Optional.ofNullable(archetype));
   }
 
   public T build() {
-    return new Spawner<T>().spawn(this, Optional.empty());
+    return this.build(null);
   }
 
-  Monster.LimbSetup<T> getLimbSetup() {
+  MonsterLimb.Setup<T> getLimbSetup() {
+    return this.setup;
+  }
+
+  MonsterArchetype.Setup<T> getArchetypeSetup() {
     return this.setup;
   }
 
@@ -71,10 +74,6 @@ public class MonsterBuilder<T> {
 
   public List<Class<? extends Monster.DefaultGenerator>> getDefaultGenerators() {
     return this.defaultGenerators;
-  }
-
-  Monster.ArchetypeSetup<T> getArchetypeSetup() {
-    return this.setup;
   }
 
   public Optional<Object> getValue(final MonsterLimb.Schema limb) {

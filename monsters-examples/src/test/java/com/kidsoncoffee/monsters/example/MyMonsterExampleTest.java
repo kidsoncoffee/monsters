@@ -1,6 +1,5 @@
 package com.kidsoncoffee.monsters.example;
 
-import com.kidsoncoffee.monsters.example.MyDataObjectMonsterLimbSetup.ARCHETYPES;
 import org.junit.Test;
 
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.kidsoncoffee.monsters.example.MyDataObjectMonsterLimbSetup.DEFAULT_PROFESSIONS;
+import static com.kidsoncoffee.monsters.example.MyDataObjectMonsterLimbSetup.RETAIL_JEDI;
 import static com.kidsoncoffee.monsters.example.MyDataObjectMonsterLimbSetup.RETAIL_JEDI_PROFESSION;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -97,7 +97,7 @@ public class MyMonsterExampleTest {
     when:
     monstersNotRetailJedi =
         IntStream.range(0, 100)
-            .mapToObj(i -> MyDataObjectMonsterBuilder.MyDataObject().build(ARCHETYPES.RETAIL_JEDI))
+            .mapToObj(i -> MyDataObjectMonsterBuilder.MyDataObject().build(RETAIL_JEDI))
             .filter(monster -> !RETAIL_JEDI_PROFESSION.equals(monster.getProfession()))
             .collect(Collectors.toList());
 

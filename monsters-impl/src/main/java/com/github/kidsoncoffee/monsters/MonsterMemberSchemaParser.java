@@ -8,6 +8,9 @@ import java.lang.reflect.Method;
  */
 public class MonsterMemberSchemaParser {
   public static MonsterLimb.Schema parse(final Method method) {
-    return ImmutableSchema.builder().name(method.getName()).type(method.getReturnType()).build();
+    return ImmutableMonsterLimbSchema.builder()
+        .name(method.getName())
+        .type(method.getReturnType())
+        .build();
   }
 }

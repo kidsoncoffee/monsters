@@ -1,16 +1,17 @@
 package com.github.kidsoncoffee.monsters.interaction;
 
-import com.github.kidsoncoffee.monsters.Monster;
+import com.github.kidsoncoffee.monsters.MonsterArchetype;
+import com.github.kidsoncoffee.monsters.MonsterLimb;
 
-public class DefaultArchetypeBindingBuilder<T> implements Monster.ArchetypeBindingBuilder<T> {
-  private final LimbSetupStore setupStore;
+public class DefaultArchetypeBindingBuilder<T> implements MonsterArchetype.LimbSetup<T> {
+  private final LimbSetupStore<T> setupStore;
 
-  public DefaultArchetypeBindingBuilder(LimbSetupStore setupStore) {
+  public DefaultArchetypeBindingBuilder(final LimbSetupStore<T> setupStore) {
     this.setupStore = setupStore;
   }
 
   @Override
-  public Monster.ArchetypeBindingBuilder setup(final Monster.LimbSetup generation) {
+  public MonsterArchetype.LimbSetup setup(final MonsterLimb.Setup<T> generation) {
     this.setupStore.addToCurrent(generation);
     return this;
   }

@@ -8,11 +8,10 @@ import java.util.List;
  * @author fernando.chovich
  * @since 1.0
  */
-public @interface MonsterLimb {
+public interface MonsterLimb {
 
-  // MOVE THIS AND RENAME TO MEMBER
-  // THIS IS NOT PUBLIC API
   @Value.Immutable
+  @Value.Style(typeImmutable = "ImmutableMonsterLimb*")
   interface Schema {
     String getName();
 
@@ -20,11 +19,16 @@ public @interface MonsterLimb {
   }
 
   @FunctionalInterface
+  interface Setup<T> {
+    void setup(final MonsterLimb.Generation generation, final T monster);
+  }
+
+  @FunctionalInterface
   interface ValueGenerator<T> {
     T generate();
   }
 
-  interface GenerationSetup<T> {
+  interface ValueGenerationSetup<T> {
     void generate(final ValueGenerator<T> generator);
 
     void fix(final T value);
@@ -34,13 +38,13 @@ public @interface MonsterLimb {
 
   // TODO does this need to be here?
   class Generation {
-    private GenerationSetup setup;
+    private ValueGenerationSetup setup;
 
-    public Generation(final GenerationSetup setup) {
+    public Generation(final ValueGenerationSetup setup) {
       this.setup = setup;
     }
 
-    public <T> GenerationSetup<T> on(final T nothingtolookhere) {
+    public <T> ValueGenerationSetup<T> on(final T nothingtolookhere) {
       return this.setup;
     }
   }

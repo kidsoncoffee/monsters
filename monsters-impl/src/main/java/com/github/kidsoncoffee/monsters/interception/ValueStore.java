@@ -1,6 +1,6 @@
 package com.github.kidsoncoffee.monsters.interception;
 
-import com.github.kidsoncoffee.monsters.ImmutableSchema;
+import com.github.kidsoncoffee.monsters.ImmutableMonsterLimbSchema;
 import com.github.kidsoncoffee.monsters.MonsterLimb;
 
 import java.util.HashMap;
@@ -15,6 +15,6 @@ public class ValueStore {
   }
 
   public void set(final MonsterLimb.Schema limb, final Object value) {
-    this.values.put(ImmutableSchema.copyOf(limb), value);
+    this.values.put(ImmutableMonsterLimbSchema.copyOf(limb), value);
   }
 }

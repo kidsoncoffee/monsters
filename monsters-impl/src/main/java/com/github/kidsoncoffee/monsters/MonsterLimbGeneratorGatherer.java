@@ -18,13 +18,13 @@ public class MonsterLimbGeneratorGatherer {
   private static List<MonsterLimb.Schema> remaining(
       final List<MonsterLimb.Schema> limbs, final DefaultGenerationSetup generationSetup) {
     return limbs.stream()
-        .filter(limb -> !generationSetup.constainsValue(ImmutableSchema.copyOf(limb)))
+        .filter(limb -> !generationSetup.constainsValue(ImmutableMonsterLimbSchema.copyOf(limb)))
         .collect(Collectors.toList());
   }
 
   public <T> Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> gather(
       final LimbSetupStore<T> archetypesSetupStore,
-      final Monster.Archetype archetype,
+      final MonsterArchetype.Schema archetype,
       final List<MonsterLimb.Schema> limbs,
       final T monster) {
     final DefaultGenerationSetup generationSetup = new DefaultGenerationSetup(this.callHistory);
@@ -34,7 +34,7 @@ public class MonsterLimbGeneratorGatherer {
       return Collections.emptyMap();
     }
 
-    final Monster.LimbSetup<T> setup = archetypesSetupStore.get(archetype).get();
+    final MonsterLimb.Setup<T> setup = archetypesSetupStore.get(archetype).get();
     setup.setup(generation, monster);
 
     final Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> generators = new HashMap<>();

@@ -1,12 +1,17 @@
 package com.github.kidsoncoffee.monsters.processor;
 
+import com.github.kidsoncoffee.monsters.Monster;
+import com.github.kidsoncoffee.monsters.MonsterOptions;
 import com.google.auto.service.AutoService;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.github.kidsoncoffee.monsters.Monster;
 import com.squareup.javapoet.ClassName;
 
-import javax.annotation.processing.*;
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.Processor;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -42,7 +47,8 @@ public class MonsterProcessor extends AbstractProcessor {
   @Override
   public boolean process(
       final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-    final Set<? extends Element> monsterElements = roundEnv.getElementsAnnotatedWith(Monster.class);
+    final Set<? extends Element> monsterElements =
+        roundEnv.getElementsAnnotatedWith(MonsterOptions.class);
 
     for (final Element monsterElement : monsterElements) {
       final Optional<? extends TypeMirror> monsterSetup =
@@ -74,6 +80,6 @@ public class MonsterProcessor extends AbstractProcessor {
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
-    return singleton(Monster.class.getCanonicalName());
+    return singleton(MonsterOptions.class.getCanonicalName());
   }
 }

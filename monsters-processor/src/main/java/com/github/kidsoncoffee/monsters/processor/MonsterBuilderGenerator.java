@@ -3,6 +3,7 @@ package com.github.kidsoncoffee.monsters.processor;
 import com.github.kidsoncoffee.monsters.Monster;
 import com.github.kidsoncoffee.monsters.MonsterBuilder;
 import com.github.kidsoncoffee.monsters.MonsterLimbRetriever;
+import com.github.kidsoncoffee.monsters.MonsterOptions;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.squareup.javapoet.*;
@@ -167,11 +168,11 @@ public class MonsterBuilderGenerator {
             return null;
           }
         };
-    final TypeMirror monsterType =
-        this.elementUtils.getTypeElement(Monster.class.getCanonicalName()).asType();
+    final TypeMirror monsterOptionsType =
+        this.elementUtils.getTypeElement(MonsterOptions.class.getCanonicalName()).asType();
     final List<Object> defaultGenerators =
         monsterElement.getAnnotationMirrors().stream()
-            .filter(e -> this.typeUtils.isSameType(monsterType, e.getAnnotationType()))
+            .filter(e -> this.typeUtils.isSameType(monsterOptionsType, e.getAnnotationType()))
             .flatMap(e -> e.getElementValues().entrySet().stream())
             .filter(e -> e.getKey().getSimpleName().toString().equals("defaultGenerators"))
             .map(Map.Entry::getValue)

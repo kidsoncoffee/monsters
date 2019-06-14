@@ -1,6 +1,6 @@
 package com.github.kidsoncoffee.monsters.interaction;
 
-import com.github.kidsoncoffee.monsters.ImmutableSchema;
+import com.github.kidsoncoffee.monsters.ImmutableMonsterLimbSchema;
 import com.github.kidsoncoffee.monsters.MonsterLimb;
 
 import java.util.HashMap;
@@ -9,8 +9,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class DefaultGenerationSetup implements MonsterLimb.GenerationSetup {
-  private final Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> generatorsByLimb = new HashMap<>();
+public class DefaultGenerationSetup implements MonsterLimb.ValueGenerationSetup {
+  private final Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> generatorsByLimb =
+      new HashMap<>();
 
   private final CallHistory callHistory;
 
@@ -28,12 +29,14 @@ public class DefaultGenerationSetup implements MonsterLimb.GenerationSetup {
   }
 
   public Optional<MonsterLimb.ValueGenerator> getValue(final MonsterLimb.Schema member) {
-    return Optional.ofNullable(this.generatorsByLimb.get(ImmutableSchema.copyOf(member)));
+    return Optional.ofNullable(
+        this.generatorsByLimb.get(ImmutableMonsterLimbSchema.copyOf(member)));
   }
 
   @Override
   public void generate(MonsterLimb.ValueGenerator generator) {
-    this.generatorsByLimb.put(ImmutableSchema.copyOf(this.callHistory.getLastCall()), generator);
+    this.generatorsByLimb.put(
+        ImmutableMonsterLimbSchema.copyOf(this.callHistory.getLastCall()), generator);
   }
 
   @Override

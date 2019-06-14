@@ -4,7 +4,11 @@ import com.github.kidsoncoffee.monsters.interaction.CallHistory;
 import com.github.kidsoncoffee.monsters.interaction.DefaultArchetypeBindingBuilder;
 import com.github.kidsoncoffee.monsters.interaction.DefaultArchetypeLimbSetup;
 import com.github.kidsoncoffee.monsters.interaction.LimbSetupStore;
-import com.github.kidsoncoffee.monsters.interception.*;
+import com.github.kidsoncoffee.monsters.interception.Interceptor;
+import com.github.kidsoncoffee.monsters.interception.InterceptorModeCentral;
+import com.github.kidsoncoffee.monsters.interception.PlayingInterceptor;
+import com.github.kidsoncoffee.monsters.interception.RecordingInterceptor;
+import com.github.kidsoncoffee.monsters.interception.ValueStore;
 import net.sf.cglib.proxy.Enhancer;
 
 import java.lang.reflect.ParameterizedType;
@@ -50,13 +54,14 @@ public class Spawner<T> {
     return (V) enhancer.create();
   }
 
-  public T spawn(final MonsterBuilder<T> builder, final Optional<Monster.Archetype> archetype) {
+  public T spawn(
+      final MonsterBuilder<T> builder, final Optional<MonsterArchetype.Schema> archetype) {
     final ValueStore valueStore = new ValueStore();
     final LimbSetupStore<T> limbSetupStore = new LimbSetupStore<>();
 
-    final DefaultArchetypeBindingBuilder<T> defaultArchetypeBindingBuilder =
+    final MonsterArchetype.LimbSetup<T> defaultArchetypeBindingBuilder =
         new DefaultArchetypeBindingBuilder<>(limbSetupStore);
-    final Monster.ArchetypeBinding<T> archetypeBinding =
+    final MonsterArchetype.Binding<T> archetypeBinding =
         new DefaultArchetypeLimbSetup<>(limbSetupStore, defaultArchetypeBindingBuilder);
 
     final CallHistory callHistory = new CallHistory();
@@ -79,7 +84,7 @@ public class Spawner<T> {
     final Class monsterClass = getTargetClass(builder);
     final T monster = (T) createMonster(monsterClass, interceptor);
 
-    limbSetupStore.setCurrent(Monster.Archetype.DEFAULT);
+    limbSetupStore.setCurrent(MonsterArchetype.DEFAULT);
     limbSetupStore.addToCurrent(builder.getLimbSetup());
 
     if (archetype.isPresent()) {
@@ -89,7 +94,7 @@ public class Spawner<T> {
     final Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> limbValueGenerators =
         generatorGatherer.gather(
             limbSetupStore,
-            archetype.orElse(Monster.Archetype.DEFAULT),
+            archetype.orElse(MonsterArchetype.DEFAULT),
             builder.getLimbs(),
             monster);
 
