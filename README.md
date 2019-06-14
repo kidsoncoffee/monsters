@@ -115,6 +115,7 @@ public class MyDataObject {
 The first step is creating a class which will centralize all information regarding that *Monster*. For the simplicity of this example, the class only needs to implement `Monster.Setup`.
 
 ```java
+@MonsterOptions
 public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject> {
 
   @Override
@@ -136,14 +137,15 @@ The `Monster.Setup` is a composite interface of `MonsterLimb.Setup` and `Monster
 The easiest way to set up data generation for a *Limb* is by using the `MonsterLimb.Setup` `setup` method.
 
 ```diff
+@MonsterOptions
 public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject> {
 
   @Override
   public void setup(final MonsterLimb.Binding binding, final MyDataObject monster) {
 -
-+    binding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
-+    binding.on(monster.getNumber()).fix(42);
-+    binding.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
++     binding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
++     binding.on(monster.getNumber()).fix(42);
++     binding.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
   }
 
   @Override
@@ -162,7 +164,100 @@ A very important concept here is that the *Monster* will never return a null val
 
 #### Set up *Monster* default generator
 
+There is a way of setting up more generic generators.
+
+```diff
+- @MonsterOptions
++ @MonsterOptions(defaultGenerators = TypeBasedDefaultGenerator.class)
+public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject> {
+
+  @Override
+  public void setup(final MonsterLimb.Binding binding, final MyDataObject monster) {
+    binding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
+    binding.on(monster.getNumber()).fix(42);
+    binding.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
+  }
+
+  @Override
+  public void setup(final MonsterArchetype.Binding<MyDataObject> binding) {
+
+  }
+}
+```
+
+In the example above the default generator specified is the `TypeBaseDefaultGenerator` which generates random values for a *Limb* according to its type. It is possible to specify more than one default generator and the framework will given priority to the most right declared class.
+
 ### Object Mother pattern
+
+It's easy to create objects following the [**Object Mother pattern**](https://martinfowler.com/bliki/ObjectMother.html). This is done by setting up *Archetypes*.
+
+```diff
+@MonsterOptions(defaultGenerators = TypeBasedDefaultGenerator.class)
+public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject> {
+
++   public static final MonsterArchetype.Schema PARENT = ImmutableMonsterArchetypeSchema.builder()
++     .description("PARENT")
++     .build();
++
++   public static final MonsterArchetype.Schema CHILD = ImmutableMonsterArchetypeSchema.builder()
++     .description("CHILD")
++     .extendsFrom(PARENT)
++     .build();
+
+  @Override
+  public void setup(final MonsterLimb.Binding binding, final MyDataObject monster) {
+    binding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
+    binding.on(monster.getNumber()).fix(42);
+    binding.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
+  }
+
+  @Override
+  public void setup(final MonsterArchetype.Binding<MyDataObject> binding) {
+-  
++     binding.when(PARENT).setup(
++       (generation, monster) -> {
++         generation.on(monster.getName()).fix("Mr. Parent");
++         generation.on(monster.getNumber()).fix(666);
++       }
++     );
++     binding.when(CHILD).setup(
++       (generation, monster) -> {
++         generation.on(monster.getName()).fix("Kiddo");
++       }
++     );
+  }
+}
+```
+
+In the example above, it was created two archetypes:
+* **Parent**: Have fixed values for name and number.
+* **Child**: Have fixed values for name but extends from **Parent**.
+
+The default fallback for an archetype, unless specified otherwise, is the default archetype and that means what is configured on the `setup(final MonsterLimb.Binding binding, final MyDataObject monster)` method.
+
+So let's invoke the three archetypes and see how the values were generated:
+
+```java
+// The default archetype
+MyDataObjectMonster.myDataObject().build(); 
+
+// name: a random UUID
+// number: 42
+// profession: one of the three professions
+
+// The parent archetype
+MyDataObjectMonster.myDataObject().build(MyDataObjectMonsterLimbSetup.PARENT); 
+
+// name: Mr. Parent
+// number: 666
+// profession: one of the three professions
+
+// The child archetype
+MyDataObjectMonster.myDataObject().build(MyDataObjectMonsterLimbSetup.CHILD); 
+// name: Kiddo
+// number: 666
+// profession: one of the three professions
+```
 
 ## Deep dive
 ## Download
