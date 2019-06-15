@@ -9,13 +9,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class DefaultGenerationSetup implements MonsterLimb.ValueGenerationSetup {
+public class DefaultGeneratorSetupLimb implements MonsterLimb.LimbValueGeneratorSetup {
   private final Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> generatorsByLimb =
       new HashMap<>();
 
   private final CallHistory callHistory;
 
-  public DefaultGenerationSetup(final CallHistory callHistory) {
+  public DefaultGeneratorSetupLimb(final CallHistory callHistory) {
     this.callHistory = callHistory;
   }
 

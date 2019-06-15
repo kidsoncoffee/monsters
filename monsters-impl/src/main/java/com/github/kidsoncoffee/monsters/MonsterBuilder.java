@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 public class MonsterBuilder<T> {
 
-  private final Monster.Setup<T> setup;
+  private final Monster.DefaultSetup<T> setup;
 
   private final List<MonsterLimb.Schema> limbs;
 
@@ -20,7 +20,7 @@ public class MonsterBuilder<T> {
   private final Map<MonsterLimb.Schema, Object> values = new HashMap<>();
 
   public MonsterBuilder(
-      final Monster.Setup<T> setup,
+      final Monster.DefaultSetup<T> setup,
       final List<MonsterLimb.Schema> limbs,
       final List<Class<? extends Monster.DefaultGenerator>> defaultGenerators) {
     this.setup = setup;
@@ -29,14 +29,14 @@ public class MonsterBuilder<T> {
   }
 
   public MonsterBuilder(
-      final Class<? extends Monster.Setup<T>> setup,
+      final Class<? extends Monster.DefaultSetup<T>> setup,
       final List<MonsterLimb.Schema> limbs,
       final List<Class<? extends Monster.DefaultGenerator>> defaultGenerators) {
     this(instantiate(setup), limbs, defaultGenerators);
   }
 
-  private static <X> Monster.Setup<X> instantiate(
-      final Class<? extends Monster.Setup<X>> monsterSetup) {
+  private static <X> Monster.DefaultSetup<X> instantiate(
+      final Class<? extends Monster.DefaultSetup<X>> monsterSetup) {
     try {
       return monsterSetup.newInstance();
     } catch (InstantiationException | IllegalAccessException e) {
@@ -56,7 +56,7 @@ public class MonsterBuilder<T> {
     return this.build(null);
   }
 
-  MonsterLimb.Setup<T> getLimbSetup() {
+  MonsterLimb.DefaultSetup<T> getLimbSetup() {
     return this.setup;
   }
 

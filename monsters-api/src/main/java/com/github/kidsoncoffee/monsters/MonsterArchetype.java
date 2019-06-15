@@ -32,6 +32,6 @@ public interface MonsterArchetype {
   }
 
   interface LimbSetup<T> {
-    LimbSetup setup(final MonsterLimb.Setup<T> generation);
+    LimbSetup setup(final MonsterLimb.DefaultSetup<T> generation);
   }
 }

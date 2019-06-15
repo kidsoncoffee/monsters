@@ -111,7 +111,7 @@ dependencies {
 
 ### Random data generation
 
-In this example we will setup a *Monster* for the following data object.
+In this example we will defaultSetup a *Monster* for the following data object.
 
 ```java
 public class MyDataObject {
@@ -136,12 +136,12 @@ The first step is creating a class which will centralize all information regardi
 public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject> {
 
   @Override
-  public void setup(final MonsterLimb.Binding binding, final MyDataObject monster) {
+  public void defaultSetup(final MonsterLimb.Binding valueGeneratorBinding, final MyDataObject monster) {
 
   }
 
   @Override
-  public void setup(final MonsterArchetype.Binding<MyDataObject> binding) {
+  public void defaultSetup(final MonsterArchetype.Binding<MyDataObject> valueGeneratorBinding) {
 
   }
 }
@@ -151,14 +151,14 @@ The `Monster.Setup` is a composite interface of `MonsterLimb.Setup` and `Monster
 
 #### Set up *Limbs's* value generation
 
-The easiest way to set up data generation for a *Limb* is by using the `MonsterLimb.Setup` `setup` method.
+The easiest way to set up data generation for a *Limb* is by using the `MonsterLimb.Setup` `defaultSetup` method.
 
 ```diff
 @MonsterOptions
 public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject> {
 
   @Override
-  public void setup(final MonsterLimb.Binding binding, final MyDataObject monster) {
+  public void defaultSetup(final MonsterLimb.Binding valueGeneratorBinding, final MyDataObject monster) {
 -
 +     binding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
 +     binding.on(monster.getNumber()).fix(42);
@@ -166,7 +166,7 @@ public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject>
   }
 
   @Override
-  public void setup(final MonsterArchetype.Binding<MyDataObject> binding) {
+  public void defaultSetup(final MonsterArchetype.Binding<MyDataObject> valueGeneratorBinding) {
 
   }
 }
@@ -177,7 +177,7 @@ The example above shows all the possible set ups for generating data:
 * Fixing a value to be returned
 * Picking up a random value from a list of options
 
-A very important concept here is that the *Monster* will never return a null value unless explicitly configured. Saying that, if there is a *Limb* in the *Monster* without any generation binding, an exception will be thrown when called.
+A very important concept here is that the *Monster* will never return a null value unless explicitly configured. Saying that, if there is a *Limb* in the *Monster* without any generation valueGeneratorBinding, an exception will be thrown when called.
 
 #### Set up *Monster* default generator
 

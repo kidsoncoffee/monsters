@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LimbSetupStore<T> {
 
-  private final Map<MonsterArchetype.Schema, MonsterLimb.Setup<T>> indexed = new HashMap<>();
+  private final Map<MonsterArchetype.Schema, MonsterLimb.DefaultSetup<T>> indexed = new HashMap<>();
 
   private final AtomicReference<MonsterArchetype.Schema> current = new AtomicReference<>();
 
@@ -18,11 +18,11 @@ public class LimbSetupStore<T> {
     current.set(archetype);
   }
 
-  public void addToCurrent(final MonsterLimb.Setup<T> generation) {
+  public void addToCurrent(final MonsterLimb.DefaultSetup<T> generation) {
     indexed.put(current.getAndSet(null), generation);
   }
 
-  public Optional<MonsterLimb.Setup<T>> get(final MonsterArchetype.Schema archetype) {
+  public Optional<MonsterLimb.DefaultSetup<T>> get(final MonsterArchetype.Schema archetype) {
     return Optional.ofNullable(indexed.get(archetype));
   }
 }

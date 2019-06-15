@@ -11,7 +11,7 @@ public class DefaultArchetypeBindingBuilder<T> implements MonsterArchetype.LimbS
   }
 
   @Override
-  public MonsterArchetype.LimbSetup setup(final MonsterLimb.Setup<T> generation) {
+  public MonsterArchetype.LimbSetup setup(final MonsterLimb.DefaultSetup<T> generation) {
     this.setupStore.addToCurrent(generation);
     return this;
   }

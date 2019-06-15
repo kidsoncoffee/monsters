@@ -1,7 +1,7 @@
 package com.github.kidsoncoffee.monsters;
 
 import com.github.kidsoncoffee.monsters.interaction.CallHistory;
-import com.github.kidsoncoffee.monsters.interaction.DefaultGenerationSetup;
+import com.github.kidsoncoffee.monsters.interaction.DefaultGeneratorSetupLimb;
 import com.github.kidsoncoffee.monsters.interaction.LimbSetupStore;
 
 import java.util.*;
@@ -16,7 +16,7 @@ public class MonsterLimbGeneratorGatherer {
   }
 
   private static List<MonsterLimb.Schema> remaining(
-      final List<MonsterLimb.Schema> limbs, final DefaultGenerationSetup generationSetup) {
+      final List<MonsterLimb.Schema> limbs, final DefaultGeneratorSetupLimb generationSetup) {
     return limbs.stream()
         .filter(limb -> !generationSetup.constainsValue(ImmutableMonsterLimbSchema.copyOf(limb)))
         .collect(Collectors.toList());
@@ -27,15 +27,15 @@ public class MonsterLimbGeneratorGatherer {
       final MonsterArchetype.Schema archetype,
       final List<MonsterLimb.Schema> limbs,
       final T monster) {
-    final DefaultGenerationSetup generationSetup = new DefaultGenerationSetup(this.callHistory);
-    final MonsterLimb.Binding binding = new MonsterLimb.Binding(generationSetup);
+    final DefaultGeneratorSetupLimb generationSetup = new DefaultGeneratorSetupLimb(this.callHistory);
+    final MonsterLimb.ValueGeneratorBinding valueGeneratorBinding = new MonsterLimb.ValueGeneratorBinding(generationSetup);
 
     if (!archetypesSetupStore.get(archetype).isPresent()) {
       return Collections.emptyMap();
     }
 
-    final MonsterLimb.Setup<T> setup = archetypesSetupStore.get(archetype).get();
-    setup.setup(binding, monster);
+    final MonsterLimb.DefaultSetup<T> defaultSetup = archetypesSetupStore.get(archetype).get();
+    defaultSetup.defaultSetup(valueGeneratorBinding, monster);
 
     final Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> generators = new HashMap<>();
     for (final MonsterLimb.Schema limb : limbs) {

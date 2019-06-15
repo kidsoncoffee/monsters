@@ -8,7 +8,7 @@ import java.util.Optional;
  */
 public interface Monster {
 
-  interface Setup<T> extends MonsterLimb.Setup<T>, MonsterArchetype.Setup<T> {}
+  interface DefaultSetup<T> extends MonsterLimb.DefaultSetup<T>, MonsterArchetype.Setup<T> {}
 
   interface DefaultGenerator {
     Optional<Object> generate(final MonsterLimb.Schema limb);

@@ -75,7 +75,7 @@ public class MonsterProcessor extends AbstractProcessor {
     final TypeMirror elementType = this.typeUtils.asElement(superType).asType();
     final String elementTypeErasure = this.typeUtils.erasure(elementType).toString();
 
-    return elementTypeErasure.equals(Monster.Setup.class.getCanonicalName());
+    return elementTypeErasure.equals(Monster.DefaultSetup.class.getCanonicalName());
   }
 
   @Override

@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.kidsoncoffee.monsters.example.MyDataObjectMonsterLimbSetup.DEFAULT_PROFESSIONS;
-import static com.kidsoncoffee.monsters.example.MyDataObjectMonsterLimbSetup.RETAIL_JEDI;
-import static com.kidsoncoffee.monsters.example.MyDataObjectMonsterLimbSetup.RETAIL_JEDI_PROFESSION;
+import static com.kidsoncoffee.monsters.example.MyDataObjectMonsterLimbDefaultSetup.DEFAULT_PROFESSIONS;
+import static com.kidsoncoffee.monsters.example.MyDataObjectMonsterLimbDefaultSetup.RETAIL_JEDI;
+import static com.kidsoncoffee.monsters.example.MyDataObjectMonsterLimbDefaultSetup.RETAIL_JEDI_PROFESSION;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("UnusedLabel") // USED FOR BDD

@@ -5,13 +5,13 @@ import com.github.kidsoncoffee.monsters.Monster;
 import com.github.kidsoncoffee.monsters.MonsterArchetype;
 import com.github.kidsoncoffee.monsters.MonsterLimb;
 import com.github.kidsoncoffee.monsters.MonsterOptions;
-import com.github.kidsoncoffee.monsters.generator.TypeBasedGenerator;
+import com.github.kidsoncoffee.monsters.generator.TypeBasedDefaultGenerator;
 
 import java.util.Arrays;
 import java.util.List;
 
-@MonsterOptions(defaultGenerators = TypeBasedGenerator.class)
-public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject> {
+@MonsterOptions(defaultGenerators = TypeBasedDefaultGenerator.class)
+public class MyDataObjectMonsterLimbDefaultSetup implements Monster.DefaultSetup<MyDataObject> {
 
   public static final List<String> DEFAULT_PROFESSIONS =
       Arrays.asList("Beverage Dissemination Officer", "Chick Sexer", "Digital Overlord");
@@ -25,9 +25,9 @@ public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject>
       ImmutableMonsterArchetypeSchema.builder().description("The other").build();
 
   @Override
-  public void setup(final MonsterLimb.Binding binding, final MyDataObject monster) {
-    binding.on(monster.getProfession()).pickFrom(DEFAULT_PROFESSIONS);
-    binding.on(monster.getNumber()).fix(42);
+  public void defaultSetup(final MonsterLimb.ValueGeneratorBinding valueGeneratorBinding, final MyDataObject monster) {
+    valueGeneratorBinding.on(monster.getProfession()).pickFrom(DEFAULT_PROFESSIONS);
+    valueGeneratorBinding.on(monster.getNumber()).fix(42);
   }
 
   @Override
@@ -35,8 +35,8 @@ public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject>
     archetype
         .when(RETAIL_JEDI)
         .setup(
-            (binding, monster) -> {
-              binding.on(monster.getProfession()).fix(RETAIL_JEDI_PROFESSION);
+            (valueGeneratorBinding, monster) -> {
+              valueGeneratorBinding.on(monster.getProfession()).fix(RETAIL_JEDI_PROFESSION);
             });
   }
 }

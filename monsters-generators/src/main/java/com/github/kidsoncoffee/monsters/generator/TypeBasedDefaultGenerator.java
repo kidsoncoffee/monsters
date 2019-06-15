@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class TypeBasedGenerator implements Monster.DefaultGenerator {
+public class TypeBasedDefaultGenerator implements Monster.DefaultGenerator {
   private static final Faker FAKER = new Faker();
 
   @Override
