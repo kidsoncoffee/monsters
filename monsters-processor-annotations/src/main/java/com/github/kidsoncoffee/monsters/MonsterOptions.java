@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MonsterOptions {
-  Class<? extends Monster.DefaultGenerator>[] defaultGenerators() default {};
+  Class<? extends Monster.FallbackValueGenerator>[] defaultGenerators() default {};
 }

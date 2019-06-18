@@ -16,6 +16,7 @@
         <module>monsters-generators</module>
         <module>monsters-impl</module>
         <module>monsters-processor</module>
+        <module>monsters-processor-annotations</module>
     </modules>
 
     <properties>
@@ -75,6 +76,11 @@
             <dependency>
                 <groupId>com.github.kidsoncoffee</groupId>
                 <artifactId>monsters-generators</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.kidsoncoffee</groupId>
+                <artifactId>monsters-processor-annotations</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

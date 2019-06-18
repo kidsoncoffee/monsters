@@ -1,7 +1,8 @@
-package com.github.kidsoncoffee.monsters.interaction;
+package com.github.kidsoncoffee.monsters.limb;
 
 import com.github.kidsoncoffee.monsters.ImmutableMonsterLimbSchema;
 import com.github.kidsoncoffee.monsters.MonsterLimb;
+import com.github.kidsoncoffee.monsters.interaction.CallHistory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,13 +10,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class DefaultGeneratorSetupLimb implements MonsterLimb.LimbValueGeneratorSetup {
+/**
+ * The default implementation of {@link
+ * com.github.kidsoncoffee.monsters.MonsterLimb.ValueGeneratorSetup}.
+ *
+ * @author fernando.chovich
+ * @since 1.0
+ */
+public class ValueGeneratorSetupImpl implements MonsterLimb.ValueGeneratorSetup {
   private final Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> generatorsByLimb =
       new HashMap<>();
 
   private final CallHistory callHistory;
 
-  public DefaultGeneratorSetupLimb(final CallHistory callHistory) {
+  public ValueGeneratorSetupImpl(final CallHistory callHistory) {
     this.callHistory = callHistory;
   }
 

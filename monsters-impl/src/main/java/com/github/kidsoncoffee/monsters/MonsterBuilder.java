@@ -11,32 +11,32 @@ import java.util.Optional;
  */
 public class MonsterBuilder<T> {
 
-  private final Monster.DefaultSetup<T> setup;
+  private final Monster.Setup<T> setup;
 
   private final List<MonsterLimb.Schema> limbs;
 
-  private final List<Class<? extends Monster.DefaultGenerator>> defaultGenerators;
+  private final List<Class<? extends Monster.FallbackValueGenerator>> defaultGenerators;
 
   private final Map<MonsterLimb.Schema, Object> values = new HashMap<>();
 
   public MonsterBuilder(
-      final Monster.DefaultSetup<T> setup,
+      final Monster.Setup<T> setup,
       final List<MonsterLimb.Schema> limbs,
-      final List<Class<? extends Monster.DefaultGenerator>> defaultGenerators) {
+      final List<Class<? extends Monster.FallbackValueGenerator>> defaultGenerators) {
     this.setup = setup;
     this.limbs = limbs;
     this.defaultGenerators = defaultGenerators;
   }
 
   public MonsterBuilder(
-      final Class<? extends Monster.DefaultSetup<T>> setup,
+      final Class<? extends Monster.Setup<T>> setup,
       final List<MonsterLimb.Schema> limbs,
-      final List<Class<? extends Monster.DefaultGenerator>> defaultGenerators) {
+      final List<Class<? extends Monster.FallbackValueGenerator>> defaultGenerators) {
     this(instantiate(setup), limbs, defaultGenerators);
   }
 
-  private static <X> Monster.DefaultSetup<X> instantiate(
-      final Class<? extends Monster.DefaultSetup<X>> monsterSetup) {
+  private static <X> Monster.Setup<X> instantiate(
+      final Class<? extends Monster.Setup<X>> monsterSetup) {
     try {
       return monsterSetup.newInstance();
     } catch (InstantiationException | IllegalAccessException e) {
@@ -56,7 +56,7 @@ public class MonsterBuilder<T> {
     return this.build(null);
   }
 
-  MonsterLimb.DefaultSetup<T> getLimbSetup() {
+  MonsterLimb.Setup<T> getLimbSetup() {
     return this.setup;
   }
 
@@ -72,7 +72,7 @@ public class MonsterBuilder<T> {
     return this.limbs;
   }
 
-  public List<Class<? extends Monster.DefaultGenerator>> getDefaultGenerators() {
+  public List<Class<? extends Monster.FallbackValueGenerator>> getDefaultGenerators() {
     return this.defaultGenerators;
   }
 

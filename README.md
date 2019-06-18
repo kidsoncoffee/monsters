@@ -160,9 +160,9 @@ public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject>
   @Override
   public void defaultSetup(final MonsterLimb.Binding valueGeneratorBinding, final MyDataObject monster) {
 -
-+     binding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
-+     binding.on(monster.getNumber()).fix(42);
-+     binding.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
++     valueGeneratorBinding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
++     valueGeneratorBinding.on(monster.getNumber()).fix(42);
++     valueGeneratorBinding.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
   }
 
   @Override
@@ -185,18 +185,18 @@ There is a way of setting up more generic generators.
 
 ```diff
 - @MonsterOptions
-+ @MonsterOptions(defaultGenerators = TypeBasedDefaultGenerator.class)
++ @MonsterOptions(fallbackValueGenerators = TypeBasedDefaultGenerator.class)
 public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject> {
 
   @Override
-  public void setup(final MonsterLimb.Binding binding, final MyDataObject monster) {
-    binding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
-    binding.on(monster.getNumber()).fix(42);
-    binding.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
+  public void setup(final MonsterLimb.Binding valueGeneratorBinding, final MyDataObject monster) {
+    valueGeneratorBinding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
+    valueGeneratorBinding.on(monster.getNumber()).fix(42);
+    valueGeneratorBinding.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
   }
 
   @Override
-  public void setup(final MonsterArchetype.Binding<MyDataObject> binding) {
+  public void setup(final MonsterArchetype.Binding<MyDataObject> valueGeneratorBinding) {
 
   }
 }
@@ -209,7 +209,7 @@ In the example above the default generator specified is the `TypeBaseDefaultGene
 It's easy to create objects following the [**Object Mother pattern**](https://martinfowler.com/bliki/ObjectMother.html). This is done by setting up *Archetypes*.
 
 ```diff
-@MonsterOptions(defaultGenerators = TypeBasedDefaultGenerator.class)
+@MonsterOptions(fallbackValueGenerators = TypeBasedDefaultGenerator.class)
 public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject> {
 
 +   public static final MonsterArchetype.Schema PARENT = ImmutableMonsterArchetypeSchema.builder()
@@ -222,22 +222,22 @@ public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject>
 +     .build();
 
   @Override
-  public void setup(final MonsterLimb.Binding binding, final MyDataObject monster) {
-    binding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
-    binding.on(monster.getNumber()).fix(42);
-    binding.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
+  public void setup(final MonsterLimb.Binding valueGeneratorBinding, final MyDataObject monster) {
+    valueGeneratorBinding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
+    valueGeneratorBinding.on(monster.getNumber()).fix(42);
+    valueGeneratorBinding.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
   }
 
   @Override
-  public void setup(final MonsterArchetype.Binding<MyDataObject> binding) {
+  public void setup(final MonsterArchetype.Binding<MyDataObject> valueGeneratorBinding) {
 -  
-+     binding.when(PARENT).setup(
++     valueGeneratorBinding.when(PARENT).setup(
 +       (generation, monster) -> {
 +         generation.on(monster.getName()).fix("Mr. Parent");
 +         generation.on(monster.getNumber()).fix(666);
 +       }
 +     );
-+     binding.when(CHILD).setup(
++     valueGeneratorBinding.when(CHILD).setup(
 +       (generation, monster) -> {
 +         generation.on(monster.getName()).fix("Kiddo");
 +       }
@@ -250,7 +250,7 @@ In the example above, it was created two archetypes:
 * **Parent**: Have fixed values for name and number.
 * **Child**: Have fixed values for name but extends from **Parent**.
 
-The default fallback for an archetype, unless specified otherwise, is the default archetype and that means what is configured on the `setup(final MonsterLimb.Binding binding, final MyDataObject monster)` method.
+The default fallback for an archetype, unless specified otherwise, is the default archetype and that means what is configured on the `setup(final MonsterLimb.Binding valueGeneratorBinding, final MyDataObject monster)` method.
 
 So let's invoke the three archetypes and see how the values were generated:
 

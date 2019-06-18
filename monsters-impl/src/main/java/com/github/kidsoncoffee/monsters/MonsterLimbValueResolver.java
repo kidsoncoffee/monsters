@@ -9,19 +9,19 @@ public class MonsterLimbValueResolver {
   public <T> Object resolve(
       final MonsterBuilder<T> builder,
       final Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> generators,
-      final List<Monster.DefaultGenerator> defaultGenerators,
+      final List<Monster.FallbackValueGenerator> fallbackValueGenerators,
       final MonsterLimb.Schema limb) {
-    return builder.getValue(limb).orElseGet(() -> resolve(generators, defaultGenerators, limb));
+    return builder.getValue(limb).orElseGet(() -> resolve(generators, fallbackValueGenerators, limb));
   }
 
   private Object resolve(
       final Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> generators,
-      final List<Monster.DefaultGenerator> defaultGenerators,
+      final List<Monster.FallbackValueGenerator> fallbackValueGenerators,
       final MonsterLimb.Schema limb) {
     if (generators.containsKey(limb)) {
       return generators.get(limb).generate();
     }
-    return defaultGenerators.stream()
+    return fallbackValueGenerators.stream()
         .sequential()
         .map(g -> g.generate(limb))
         .filter(Optional::isPresent)

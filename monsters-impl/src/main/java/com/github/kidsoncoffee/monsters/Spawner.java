@@ -1,51 +1,85 @@
 package com.github.kidsoncoffee.monsters;
 
 import com.github.kidsoncoffee.monsters.interaction.CallHistory;
-import com.github.kidsoncoffee.monsters.interaction.DefaultArchetypeBindingBuilder;
-import com.github.kidsoncoffee.monsters.interaction.DefaultArchetypeLimbSetup;
-import com.github.kidsoncoffee.monsters.interaction.LimbSetupStore;
+import com.github.kidsoncoffee.monsters.archetype.ArchetypeLimbValueGeneratorSetupImpl;
+import com.github.kidsoncoffee.monsters.archetype.ArchetypeValueGeneratorBindingImpl;
+import com.github.kidsoncoffee.monsters.archetype.LimbsSetupsByArchetype;
 import com.github.kidsoncoffee.monsters.interception.Interceptor;
 import com.github.kidsoncoffee.monsters.interception.InterceptorModeCentral;
 import com.github.kidsoncoffee.monsters.interception.PlayingInterceptor;
 import com.github.kidsoncoffee.monsters.interception.RecordingInterceptor;
 import com.github.kidsoncoffee.monsters.interception.ValueStore;
+import com.github.kidsoncoffee.monsters.limb.ValueGeneratorSorter;
 import net.sf.cglib.proxy.Enhancer;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
+ * Spawns a <strong>Monster</strong>.
+ *
  * @author fernando.chovich
  * @since 1.0
  */
 public class Spawner<T> {
 
-  private static Class getTargetClass(final MonsterBuilder builder) {
+  /**
+   * Retrieves the type of the <strong>Monster</strong> by looking into the {@link MonsterBuilder}
+   * type parameter.
+   *
+   * @param builder The builder to look into the type parameters.
+   * @return The type of the <strong>Monster</strong>.
+   */
+  private static Class retrieveTargetClass(final MonsterBuilder builder) {
     return (Class)
         ((ParameterizedType) builder.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
   }
 
-  private static List<Monster.DefaultGenerator> instantiate(
-      List<Class<? extends Monster.DefaultGenerator>> defaultGenerators) {
-    return defaultGenerators.stream()
-        .map(
-            d -> {
-              try {
-                return d.newInstance();
-              } catch (InstantiationException | IllegalAccessException e) {
-                throw new IllegalStateException(
-                    String.format(
-                        "Unable to instantiate the default generator '%s'. A public zero arguments constructors is mandatory.",
-                        d));
-              }
-            })
-        .map(Monster.DefaultGenerator.class::cast)
+  /**
+   * Instantiates and returns the {@link
+   * com.github.kidsoncoffee.monsters.Monster.FallbackValueGenerator} in order.
+   *
+   * @param fallbackValueGenerators The fallback value generators classes.
+   * @return The instantiated fallback value generators.
+   */
+  private static List<Monster.FallbackValueGenerator> instantiate(
+      List<Class<? extends Monster.FallbackValueGenerator>> fallbackValueGenerators) {
+    return fallbackValueGenerators.stream()
+        .map(Spawner::instantiate)
+        .map(Monster.FallbackValueGenerator.class::cast)
         .collect(Collectors.toList());
   }
 
+  /**
+   * Instantiate and return the {@link
+   * com.github.kidsoncoffee.monsters.Monster.FallbackValueGenerator}. It is expected that the class
+   * has a public zero arguments constructor.
+   *
+   * @param fallbackValueGeneratorClass The fallback value generator class to instantiate.
+   * @return The instantiated fallback value generator.
+   */
+  private static Monster.FallbackValueGenerator instantiate(
+      Class<? extends Monster.FallbackValueGenerator> fallbackValueGeneratorClass) {
+    try {
+      return fallbackValueGeneratorClass.newInstance();
+    } catch (InstantiationException | IllegalAccessException e) {
+      throw new IllegalStateException(
+          String.format(
+              "Unable to instantiate the default generator '%s'. A public zero arguments constructors is mandatory.",
+              fallbackValueGeneratorClass));
+    }
+  }
+
+  /**
+   * Creates a proxy of the given type.
+   *
+   * @param monsterClass The superclass of the proxy.
+   * @param methodInterceptor The method interceptor.
+   * @param <V> The type of the proxy.
+   * @return The instantiated proxy.
+   */
   private static <V> V createMonster(
       final Class<V> monsterClass, final Interceptor methodInterceptor) {
     final Enhancer enhancer = new Enhancer();
@@ -54,15 +88,60 @@ public class Spawner<T> {
     return (V) enhancer.create();
   }
 
-  public T spawn(
-      final MonsterBuilder<T> builder, final Optional<MonsterArchetype.Schema> archetype) {
-    final ValueStore valueStore = new ValueStore();
-    final LimbSetupStore<T> limbSetupStore = new LimbSetupStore<>();
+  /**
+   * Index {@link com.github.kidsoncoffee.monsters.MonsterLimb.ValueGenerator} by its limb. It will
+   * set the {@link MonsterBuilder#getLimbSetup()} as the {@link
+   * com.github.kidsoncoffee.monsters.MonsterLimb.ValueGenerator} for the {@link
+   * MonsterArchetype#DEFAULT} <strong>Archetype</strong>. Then it will invoke the {@link
+   * ValueGeneratorSorter} to go through all set scopes.
+   *
+   * @param builder The <strong>Monster</strong> builder.
+   * @param archetype The archetype to create the <strong>Monster</strong> from.
+   * @param limbsSetupsByArchetype The
+   * @param archetypeValueGeneratorBinding
+   * @param generatorGatherer
+   * @param monster
+   * @param <T>
+   * @return
+   */
+  private static <T> Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> indexValueGenerators(
+      final MonsterBuilder<T> builder,
+      final MonsterArchetype.Schema archetype,
+      final LimbsSetupsByArchetype<T> limbsSetupsByArchetype,
+      final MonsterArchetype.ValueGeneratorBinding<T> archetypeValueGeneratorBinding,
+      final ValueGeneratorSorter generatorGatherer,
+      final T monster) {
+    limbsSetupsByArchetype.setCurrent(MonsterArchetype.DEFAULT);
+    limbsSetupsByArchetype.addToCurrent(builder.getLimbSetup());
 
-    final MonsterArchetype.LimbSetup<T> defaultArchetypeBindingBuilder =
-        new DefaultArchetypeBindingBuilder<>(limbSetupStore);
-    final MonsterArchetype.Binding<T> archetypeBinding =
-        new DefaultArchetypeLimbSetup<>(limbSetupStore, defaultArchetypeBindingBuilder);
+    if (archetype != null) {
+      builder.getArchetypeSetup().archetypeSetup(archetypeValueGeneratorBinding);
+    }
+
+    return generatorGatherer.sort(
+        limbsSetupsByArchetype,
+        archetype != null ? archetype : MonsterArchetype.DEFAULT,
+        builder.getLimbs(),
+        monster);
+  }
+
+  /**
+   * Spawns the <strong>Monster</strong> that matches the given <strong>Archetype</strong> using the
+   * information from the builder.
+   *
+   * <p><@param builder The <strong>Monster</strong> builder.
+   *
+   * @param archetype The <strong>Archetype</strong> to spawn.
+   * @return The <strong>Monster</strong> ready to be used.
+   */
+  T spawn(final MonsterBuilder<T> builder, final MonsterArchetype.Schema archetype) {
+    final ValueStore valueStore = new ValueStore();
+    final LimbsSetupsByArchetype<T> limbsSetupsByArchetype = new LimbsSetupsByArchetype<>();
+
+    final MonsterArchetype.LimbValueGeneratorSetup<T> defaultArchetypeBindingBuilder =
+        new ArchetypeLimbValueGeneratorSetupImpl<>(limbsSetupsByArchetype);
+    final MonsterArchetype.ValueGeneratorBinding<T> archetypeValueGeneratorBinding =
+        new ArchetypeValueGeneratorBindingImpl<>(limbsSetupsByArchetype, defaultArchetypeBindingBuilder);
 
     final CallHistory callHistory = new CallHistory();
     final RecordingInterceptor recordingInterceptor = new RecordingInterceptor(callHistory);
@@ -72,30 +151,25 @@ public class Spawner<T> {
         new InterceptorModeCentral(recordingInterceptor, playingInterceptor);
     final Interceptor interceptor = new Interceptor(central);
 
-    final MonsterLimbGeneratorGatherer generatorGatherer =
-        new MonsterLimbGeneratorGatherer(callHistory);
-    final List<Monster.DefaultGenerator> defaultGenerators =
+    final ValueGeneratorSorter generatorGatherer =
+        new ValueGeneratorSorter(callHistory);
+    final List<Monster.FallbackValueGenerator> fallbackValueGenerators =
         instantiate(builder.getDefaultGenerators());
 
     final MonsterLimbValueResolver valueResolver = new MonsterLimbValueResolver();
 
     central.startRecording();
 
-    final Class monsterClass = getTargetClass(builder);
+    final Class monsterClass = retrieveTargetClass(builder);
     final T monster = (T) createMonster(monsterClass, interceptor);
 
-    limbSetupStore.setCurrent(MonsterArchetype.DEFAULT);
-    limbSetupStore.addToCurrent(builder.getLimbSetup());
-
-    if (archetype.isPresent()) {
-      builder.getArchetypeSetup().setup(archetypeBinding);
-    }
-
     final Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> limbValueGenerators =
-        generatorGatherer.gather(
-            limbSetupStore,
-            archetype.orElse(MonsterArchetype.DEFAULT),
-            builder.getLimbs(),
+        indexValueGenerators(
+            builder,
+            archetype,
+            limbsSetupsByArchetype,
+            archetypeValueGeneratorBinding,
+            generatorGatherer,
             monster);
 
     builder
@@ -104,7 +178,8 @@ public class Spawner<T> {
             limb ->
                 valueStore.set(
                     limb,
-                    valueResolver.resolve(builder, limbValueGenerators, defaultGenerators, limb)));
+                    valueResolver.resolve(
+                        builder, limbValueGenerators, fallbackValueGenerators, limb)));
 
     central.startPlaying();
     return monster;

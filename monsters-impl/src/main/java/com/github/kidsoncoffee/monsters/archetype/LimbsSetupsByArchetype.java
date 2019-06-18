@@ -1,15 +1,20 @@
-package com.github.kidsoncoffee.monsters.interaction;
+package com.github.kidsoncoffee.monsters.archetype;
 
 import com.github.kidsoncoffee.monsters.MonsterArchetype;
+import com.github.kidsoncoffee.monsters.MonsterLimb;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ArchetypeSetupStore<T> {
+/**
+ * @author fernando.chovich
+ * @since 1.0
+ */
+public class LimbsSetupsByArchetype<T> {
 
-  private final Map<MonsterArchetype.Schema, MonsterArchetype.Setup<T>> indexed = new HashMap<>();
+  private final Map<MonsterArchetype.Schema, MonsterLimb.Setup<T>> indexed = new HashMap<>();
 
   private final AtomicReference<MonsterArchetype.Schema> current = new AtomicReference<>();
 
@@ -17,11 +22,11 @@ public class ArchetypeSetupStore<T> {
     current.set(archetype);
   }
 
-  public void addToCurrent(final MonsterArchetype.Setup<T> generation) {
+  public void addToCurrent(final MonsterLimb.Setup<T> generation) {
     indexed.put(current.getAndSet(null), generation);
   }
 
-  public Optional<MonsterArchetype.Setup<T>> get(final MonsterArchetype.Schema archetype) {
+  public Optional<MonsterLimb.Setup<T>> get(final MonsterArchetype.Schema archetype) {
     return Optional.ofNullable(indexed.get(archetype));
   }
 }
