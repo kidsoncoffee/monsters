@@ -9,11 +9,16 @@ import static java.util.stream.Collectors.toList;
 
 public class MonsterLimbRetriever {
 
-    public List<? extends Element> retrieve(final Element monsterTargetElement) {
-        return monsterTargetElement.getEnclosedElements().stream()
-                .filter(e -> e.getKind().equals(ElementKind.METHOD) || e.getKind().isField())
-                .filter(e -> !e.getModifiers().contains(Modifier.PRIVATE))
-                .filter(e -> !e.getModifiers().contains(Modifier.PROTECTED))
-                .collect(toList());
-    }
+  public List<? extends Element> retrieve(final Element monsterTargetElement) {
+    return monsterTargetElement.getEnclosedElements().stream()
+        .filter(e -> e.getKind().equals(ElementKind.METHOD) || e.getKind().isField())
+        .filter(this::accessible)
+        .map(Element.class::cast)
+        .collect(toList());
+  }
+
+  private boolean accessible(final Element e) {
+    return !e.getModifiers().contains(Modifier.PRIVATE)
+        && !e.getModifiers().contains(Modifier.PROTECTED);
+  }
 }

@@ -1,6 +1,7 @@
 package com.github.kidsoncoffee.monsters.limb;
 
 import com.github.kidsoncoffee.monsters.MonsterLimb;
+import com.github.kidsoncoffee.monsters.interaction.CallHistory;
 
 import java.util.function.Supplier;
 
@@ -11,6 +12,6 @@ import java.util.function.Supplier;
 public class ValueGeneratorSetupFactory implements Supplier<MonsterLimb.ValueGeneratorSetup> {
   @Override
   public MonsterLimb.ValueGeneratorSetup get() {
-    return new ValueGeneratorSetupImpl();
+    return new ValueGeneratorSetupImpl(new CallHistory());
   }
 }

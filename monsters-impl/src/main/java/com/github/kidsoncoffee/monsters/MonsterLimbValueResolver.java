@@ -9,14 +9,16 @@ public class MonsterLimbValueResolver {
   public <T> Object resolve(
       final MonsterBuilder<T> builder,
       final Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> generators,
-      final List<Monster.FallbackValueGenerator> fallbackValueGenerators,
+      final List<MonsterSetup.FallbackValueGenerator> fallbackValueGenerators,
       final MonsterLimb.Schema limb) {
-    return builder.getValue(limb).orElseGet(() -> resolve(generators, fallbackValueGenerators, limb));
+    return builder
+        .getValue(limb)
+        .orElseGet(() -> resolve(generators, fallbackValueGenerators, limb));
   }
 
   private Object resolve(
       final Map<MonsterLimb.Schema, MonsterLimb.ValueGenerator> generators,
-      final List<Monster.FallbackValueGenerator> fallbackValueGenerators,
+      final List<MonsterSetup.FallbackValueGenerator> fallbackValueGenerators,
       final MonsterLimb.Schema limb) {
     if (generators.containsKey(limb)) {
       return generators.get(limb).generate();
@@ -29,6 +31,7 @@ public class MonsterLimbValueResolver {
         .orElseThrow(
             () ->
                 new IllegalStateException(
-                    String.format("Unable to find value for '%s'.", limb.getName()))).get();
+                    String.format("Unable to find value for '%s'.", limb.getName())))
+        .get();
   }
 }

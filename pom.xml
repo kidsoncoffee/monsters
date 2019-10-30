@@ -60,7 +60,7 @@
             <!-- PROJECT -->
             <dependency>
                 <groupId>com.github.kidsoncoffee</groupId>
-                <artifactId>monsters-all</artifactId>
+                <artifactId>monsters</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -15,7 +15,7 @@
         <!-- PROJECT -->
         <dependency>
             <groupId>com.github.kidsoncoffee</groupId>
-            <artifactId>monsters-all</artifactId>
+            <artifactId>monsters</artifactId>
         </dependency>
 
         <!-- 3rd PARTY -->

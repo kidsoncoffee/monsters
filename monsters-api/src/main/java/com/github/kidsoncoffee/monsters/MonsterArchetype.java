@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface MonsterArchetype {
 
   /** The default archetype which does not extend any other archetype. */
-  MonsterArchetype.Schema DEFAULT =
+  MonsterArchetype.Schema DEFAULT_ARCHETYPE =
       ImmutableMonsterArchetypeSchema.builder()
           .description("Default Archetype")
           .extendsFrom(Optional.empty())
@@ -32,13 +32,13 @@ public interface MonsterArchetype {
     String getDescription();
 
     /**
-     * Returns the parent archetype. By default is the {@link MonsterArchetype#DEFAULT}.
+     * Returns the parent archetype. By default is the {@link MonsterArchetype#DEFAULT_ARCHETYPE}.
      *
      * @return The parent archetype.
      */
     @Value.Default
     default Optional<MonsterArchetype.Schema> extendsFrom() {
-      return Optional.of(DEFAULT);
+      return Optional.of(DEFAULT_ARCHETYPE);
     }
   }
 
@@ -54,9 +54,9 @@ public interface MonsterArchetype {
      * Provides a {@link ValueGeneratorBinding} used to setup the bindings of an <strong>Monster
      * Archetype</strong>.
      *
-     * @param valueGeneratorBinding The value generator binding.
+     * @param archetypeBinding The archetype binding.
      */
-    void archetypeSetup(final ValueGeneratorBinding<T> valueGeneratorBinding);
+    void archetypeSetup(final ValueGeneratorBinding<T> archetypeBinding);
   }
 
   /**

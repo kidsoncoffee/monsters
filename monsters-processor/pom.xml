@@ -22,6 +22,10 @@
             <groupId>com.github.kidsoncoffee</groupId>
             <artifactId>monsters-impl</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.kidsoncoffee</groupId>
+            <artifactId>monsters-processor-annotations</artifactId>
+        </dependency>
 
         <!-- 3rd PARTY -->
         <dependency>

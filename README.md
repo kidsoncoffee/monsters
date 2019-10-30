@@ -190,7 +190,7 @@ public class MyDataObjectMonsterLimbSetup implements Monster.Setup<MyDataObject>
 
   @Override
   public void setup(final MonsterLimb.Binding valueGeneratorBinding, final MyDataObject monster) {
-    valueGeneratorBinding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
+    valueGenera torBinding.on(monster.getName()).generate(() -> UUID.randomUUID().toString());
     valueGeneratorBinding.on(monster.getNumber()).fix(42);
     valueGeneratorBinding.on(monster.getProfession()).pickFrom(asList("Dream Alchemist", "Digital Dynamo"));
   }

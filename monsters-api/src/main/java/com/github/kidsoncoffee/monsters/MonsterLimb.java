@@ -90,6 +90,10 @@ public interface MonsterLimb {
      * @param choices The list of possible choices to pick from.
      */
     void pickFrom(final List<T> choices);
+
+    void monster(final Class<T> dataObject);
+
+    void monster(final Class<T> dataObject, final MonsterArchetype.Schema archetype);
   }
 
   /**

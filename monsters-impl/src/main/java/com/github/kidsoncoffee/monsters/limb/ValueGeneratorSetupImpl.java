@@ -1,6 +1,8 @@
 package com.github.kidsoncoffee.monsters.limb;
 
 import com.github.kidsoncoffee.monsters.ImmutableMonsterLimbSchema;
+import com.github.kidsoncoffee.monsters.MonsterLab;
+import com.github.kidsoncoffee.monsters.MonsterArchetype;
 import com.github.kidsoncoffee.monsters.MonsterLimb;
 import com.github.kidsoncoffee.monsters.interaction.CallHistory;
 
@@ -42,18 +44,28 @@ public class ValueGeneratorSetupImpl implements MonsterLimb.ValueGeneratorSetup 
   }
 
   @Override
-  public void generate(MonsterLimb.ValueGenerator generator) {
+  public void generate(final MonsterLimb.ValueGenerator generator) {
     this.generatorsByLimb.put(
         ImmutableMonsterLimbSchema.copyOf(this.callHistory.getLastCall()), generator);
   }
 
   @Override
-  public void fix(Object value) {
+  public void fix(final Object value) {
     this.generate(() -> value);
   }
 
   @Override
-  public void pickFrom(List choices) {
+  public void pickFrom(final List choices) {
     this.generate(() -> randomPickFrom(choices));
+  }
+
+  @Override
+  public void monster(final Class dataObject) {
+    this.generate(() -> MonsterLab.create(dataObject));
+  }
+
+  @Override
+  public void monster(final Class dataObject, final MonsterArchetype.Schema archetype) {
+    this.generate(() -> MonsterLab.create(dataObject, archetype));
   }
 }

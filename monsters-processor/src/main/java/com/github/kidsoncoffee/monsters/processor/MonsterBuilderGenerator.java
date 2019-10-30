@@ -1,21 +1,36 @@
 package com.github.kidsoncoffee.monsters.processor;
 
-import com.github.kidsoncoffee.monsters.Monster;
 import com.github.kidsoncoffee.monsters.MonsterBuilder;
 import com.github.kidsoncoffee.monsters.MonsterLimbRetriever;
 import com.github.kidsoncoffee.monsters.MonsterOptions;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import com.squareup.javapoet.*;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 
 import javax.annotation.processing.Filer;
-import javax.lang.model.element.*;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
+import javax.lang.model.element.AnnotationValueVisitor;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -158,9 +173,7 @@ public class MonsterBuilderGenerator {
 
           @Override
           public Object visitArray(List<? extends AnnotationValue> vals, Object o) {
-            return vals.stream()
-                .map(e -> ((AnnotationValue) e).getValue())
-                .collect(Collectors.toList());
+            return vals.stream().map(AnnotationValue::getValue).collect(Collectors.toList());
           }
 
           @Override
@@ -178,14 +191,15 @@ public class MonsterBuilderGenerator {
             .map(Map.Entry::getValue)
             .map(e -> e.accept(annotationValueVisitor, null))
             .map(List.class::cast)
-            .flatMap(Collection::stream)
+            // .flatMap(Collection::stream)
             .collect(Collectors.toList());
     final String constructorExpression =
         String.format(
-            "super($T.class, asList($T.values()), asList(%s))",
+            "super($T.class, $T.class, asList($T.values()), asList(%s))",
             defaultGenerators.stream().map(d -> "$T.class").collect(Collectors.joining(", ")));
     final List<List> constructorParameters =
-        ImmutableList.of(asList(monsterElement, schemaClassName), defaultGenerators);
+        ImmutableList.of(
+            asList(monsterElement, monsterElement, schemaClassName), defaultGenerators);
 
     final TypeSpec typeSpec =
         TypeSpec.classBuilder(monsterClassName)

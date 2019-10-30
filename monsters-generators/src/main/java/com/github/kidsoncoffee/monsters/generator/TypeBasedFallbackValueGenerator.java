@@ -1,14 +1,14 @@
 package com.github.kidsoncoffee.monsters.generator;
 
 import com.github.javafaker.Faker;
-import com.github.kidsoncoffee.monsters.Monster;
 import com.github.kidsoncoffee.monsters.MonsterLimb;
+import com.github.kidsoncoffee.monsters.MonsterSetup;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class TypeBasedFallbackValueGenerator implements Monster.FallbackValueGenerator {
+public class TypeBasedFallbackValueGenerator implements MonsterSetup.FallbackValueGenerator {
   private static final Faker FAKER = new Faker();
 
   @Override

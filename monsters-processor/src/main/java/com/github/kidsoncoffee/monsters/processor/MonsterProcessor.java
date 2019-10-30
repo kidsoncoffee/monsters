@@ -2,6 +2,7 @@ package com.github.kidsoncoffee.monsters.processor;
 
 import com.github.kidsoncoffee.monsters.Monster;
 import com.github.kidsoncoffee.monsters.MonsterOptions;
+import com.github.kidsoncoffee.monsters.MonsterSetup;
 import com.google.auto.service.AutoService;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -36,6 +37,8 @@ public class MonsterProcessor extends AbstractProcessor {
 
   @Inject private MonsterBuilderGenerator builderGenerator;
 
+  @Inject private MonsterLabGenerator labGenerator;
+
   @Override
   public synchronized void init(final ProcessingEnvironment processingEnv) {
     super.init(processingEnv);
@@ -68,14 +71,27 @@ public class MonsterProcessor extends AbstractProcessor {
       }
     }
 
-    return false;
+    return roundEnv.getElementsAnnotatedWith(Monster.Options.class).stream()
+        .filter(this::isMonsterSetup)
+        .map(this.labGenerator::generate)
+        .anyMatch(Optional::isPresent);
+  }
+
+  private boolean isMonsterSetup(final Element element) {
+    return this.typeUtils.directSupertypes(element.asType()).stream()
+        .anyMatch(
+            type ->
+                this.typeUtils
+                    .erasure(this.typeUtils.asElement(type).asType())
+                    .toString()
+                    .equals(Monster.Setup.class.getCanonicalName()));
   }
 
   private boolean isMonsterSetupClass(TypeMirror superType) {
     final TypeMirror elementType = this.typeUtils.asElement(superType).asType();
     final String elementTypeErasure = this.typeUtils.erasure(elementType).toString();
 
-    return elementTypeErasure.equals(Monster.Setup.class.getCanonicalName());
+    return elementTypeErasure.equals(MonsterSetup.class.getCanonicalName());
   }
 
   @Override
